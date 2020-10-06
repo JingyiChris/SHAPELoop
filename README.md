@@ -20,9 +20,9 @@ export PATH=$PATH:/path/to/RNAstructure/exe/
 export DATAPATH=/path/to/RNAstructure/data_tables/
 ```
 
-## Before runnng
+## Before running
 
-It is **recommended** to define the environment variables by add the following to your bash profiles:
+It is **recommended** to define the environment variables by adding the following to your bash profiles:
 ```
 export PATH=$PATH:/path/to/SHAPELoop/bin/
 ```
@@ -33,7 +33,7 @@ A helper message is shown:
 ```
 ----------------------------------------------------------------------------------------------------
 SHAPELoop: version 1.0
-This step is the main precedure of SHAPELoop.
+This step is the main procedure of SHAPELoop.
 ----------------------------------------------------------------------------------------------------
 
 Usage:
@@ -53,7 +53,7 @@ Options With Parameters:
 
 	-N	<int>     	Specify the size of Boltzmann-weighted candidate ensemble. Default is 1000 structures
 
-	-b	<int>     	Specify the number of flanking base pairs of loops. Default is 2 base pairs
+	-b	<int>     	Specify the number of flanking base pairs of loops. Default is two base pairs
 
 Options Without Parameters:
 	-a	          	Provide all suboptimal structures
@@ -105,7 +105,7 @@ test/
 > **Note:**
 > * The `guidance_structure` folder contains the MFE structure predicted with SHAPE restraints.
 > * The `candidate_ensemble` folder contains candidates sampled with Boltzmann conditional probabilities and SHAPE restraints.
-> * The `penalty` folder contains loop penalties for the guidance strcucture and candidate structures, and may look like this:
+> * The `penalty` folder contains loop penalties for the guidance structure and candidate structures, and may look like this:
  
 | Column  | Description   |
 |---------|---------------|
