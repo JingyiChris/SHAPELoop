@@ -117,4 +117,3 @@ test/
 
 
 > * The `test.SHAPELoop.dot` contains the predicted structures.
-# SHAPELoop
