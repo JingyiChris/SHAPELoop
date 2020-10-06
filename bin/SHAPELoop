@@ -38,7 +38,7 @@ function HELP
 {
         printf -v line '%*s' "100"; echo -e "${line// /-}";
 	echo -e "${BOLD}SHAPELoop: version 1.0 ${NORM}";
-	printf '%-90s\n' "${BOLD}This step is the main precedure of SHAPELoop.${NORM}";
+	printf '%-90s\n' "${BOLD}This step is the main procedure of SHAPELoop.${NORM}";
 	printf -v line '%*s' "100"; echo -e "${line// /-}\n";
 	echo -e "${BOLD}Usage:${NORM}\n\t ${SCRIPT} [Options] -s RNA_sequence -r SHAPE_reactivities -o output_dir"\\n;
 	echo -e "${BOLD}Required Parameters:${NORM}\n\t <RNA_sequence> <SHAPE_reactivities> <output_dir>"\\n;
@@ -48,7 +48,7 @@ function HELP
     printf "\t%2s\t%-10s\t%-50s\n\n" "-r" "<filename>"  "Specify a SHAPE restraints file"
     printf "\t%2s\t%-10s\t%-50s\n\n" "-o" "<directory>"  "Output directory"
     printf "\t%2s\t%-10s\t%-50s\n\n" "-N" "<int>"  "Specify the size of Boltzmann-weighted candidate ensemble. Default is 1000 structures"
-	printf "\t%2s\t%-10s\t%-50s\n\n" "-b" "<int>"  "Specify the number of flanking base pairs of loops. Default is 2 base pairs" 
+	printf "\t%2s\t%-10s\t%-50s\n\n" "-b" "<int>"  "Specify the number of flanking base pairs of loops. Default is two base pairs" 
 	
     echo -e "${BOLD}Options Without Parameters:${NORM}";
 	printf "\t%2s\t%-10s\t%-50s\n\n" "-a" ""  "Provide all suboptimal structures" 
