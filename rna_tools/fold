@@ -1,0 +1,33 @@
+#!/bin/bash
+
+###############################################
+# Get MFE structure with shape constraints    #
+# Input: seqfile, shapefile                   #
+# Output: ctfile, dotfile                     #
+###############################################
+help()
+{
+cat << HELP
+
+Using RNAstructure to get MFE structurs with SHAPE constraints
+
+USAGE: fold [-h] seqfile shapefile ctfile_name dotfile_name
+
+OPTIONS: -h help text
+
+HELP
+exit 0
+}
+
+if [ $# != 4 ] ; then
+	help
+    exit 1
+fi
+
+seqfile=$1
+shapefile=$2
+ctfile=$3
+dotfile=$4
+
+Fold $seqfile -m 1 --SHAPE $shapefile $ctfile
+ct2dot $ctfile -1 $dotfile

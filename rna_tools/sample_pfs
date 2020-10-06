@@ -1,0 +1,41 @@
+#!/bin/bash
+
+######################################################################
+# Get sampled structures with Boltzmann conditional probabilities    #
+# and SHAPE constraints                                              #
+#                                                                    #
+# Input: seqfile, shapefile                                          #
+# Output: pfsfile, ctfile, dotfile                                   #
+######################################################################
+help()
+{
+cat << HELP
+
+Using RNAstructure to get Boltzmann weighted structures with shape constraints
+
+USAGE: sample_pfs [-h] seqfile shapefile pfsfile_name ctfile_name dotfile_name ensemble_size
+
+OPTIONS: -h help text
+
+HELP
+exit 0
+}
+
+if [ $# != 6 ] ; then
+	help
+    exit 1
+fi
+
+seqfile=$1
+shapefile=$2
+pfsfile=$3
+ctfile=$4
+dotfile=$5
+size=$6
+
+
+partition $seqfile -sh $shapefile $pfsfile
+stochastic $pfsfile  -e $size $ctfile
+ct2dot $ctfile -1 $dotfile
+awk 'NR>1&&NR%2==1' $dotfile > $dotfile.tmp
+

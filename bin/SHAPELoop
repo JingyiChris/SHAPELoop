@@ -1,0 +1,173 @@
+#!/bin/bash
+
+#####################################################################
+#   This file is part of SHAPELoop.
+#   SHAPELoop is an RNA secondary structure prediction tool developed
+#   based on conserved SHAPE patterns of various loop motifs.
+#
+#   Shapepattern can be used for multiple purposes:
+#           1. Predict RNA secondary structures
+#           2. Evaluate munally inspected or software predicted structures
+#           3. Identify kissing loops in RNA
+#           4. Detect structure switches of RNA
+#
+#   Author: Jingyi Cao
+#
+#   Copyright (C) 2020  Jingyi Cao
+#
+#   SHAPELoop is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+#   Contact: caojingyi1258@outlook.com
+#####################################################################
+
+#------
+#Set fonts for Help
+#------
+NORM=`tput sgr0`
+BOLD=`tput bold`
+REV=`tput smso`
+#get script name
+#------
+SCRIPT=`basename ${BASH_SOURCE[0]}`
+#------
+#HELP function
+#------
+function HELP
+{
+        printf -v line '%*s' "100"; echo -e "${line// /-}";
+	echo -e "${BOLD}SHAPELoop: version 1.0 ${NORM}";
+	printf '%-90s\n' "${BOLD}This step is the main precedure of SHAPELoop.${NORM}";
+	printf -v line '%*s' "100"; echo -e "${line// /-}\n";
+	echo -e "${BOLD}Usage:${NORM}\n\t ${SCRIPT} [Options] -s RNA_sequence -r SHAPE_reactivities -o output_dir"\\n;
+	echo -e "${BOLD}Required Parameters:${NORM}\n\t <RNA_sequence> <SHAPE_reactivities> <output_dir>"\\n;
+	echo -e "${BOLD}Options With Parameters:${NORM}";
+	printf "\t%2s\t%-10s\t%-50s\n\n" "-n" "<string>"  "The name of this study, default: test"
+    printf "\t%2s\t%-10s\t%-50s\n\n" "-s" "<filename>"  "Sequence file, FASTA format"
+    printf "\t%2s\t%-10s\t%-50s\n\n" "-r" "<filename>"  "Specify a SHAPE restraints file"
+    printf "\t%2s\t%-10s\t%-50s\n\n" "-o" "<directory>"  "Output directory"
+    printf "\t%2s\t%-10s\t%-50s\n\n" "-N" "<int>"  "Specify the size of Boltzmann-weighted candidate ensemble. Default is 1000 structures"
+	printf "\t%2s\t%-10s\t%-50s\n\n" "-b" "<int>"  "Specify the number of flanking base pairs of loops. Default is 2 base pairs" 
+	
+    echo -e "${BOLD}Options Without Parameters:${NORM}";
+	printf "\t%2s\t%-10s\t%-50s\n\n" "-a" ""  "Provide all suboptimal structures" 
+	printf "\t%2s\t%-10s\t%-50s\n\n" "-h" "" "Help" 
+	printf -v line '%*s' "100";echo ${line// /-}
+    exit 0
+}
+if [ $# == 0 ] ;then
+        HELP;
+        exit 1
+fi
+
+while getopts 'n:s:r:o:N:b:ah' FLAG; do
+    case $FLAG in
+	    a) #provide suboptimal structures
+                all_sup=1;
+                #echo "-a output suboptimal"
+                ;;
+		n) #set study name "n"
+                name=$OPTARG
+                #echo "-n used:$OPTARG"
+                ;;
+        s) #set RNA sequence "s"
+                seq=$OPTARG
+                #echo "-s used:$OPTARG"
+                ;;
+        r) #set SHAPE reactivities "r"
+                shape=$OPTARG
+                #echo "-r used:$OPTARG"
+                ;;
+       	o) #set output directory "o"
+                out_dir=$OPTARG
+                #echo "-o used:$OPTARG"
+                ;;
+        N) #set candidate size "N"
+                ncand=$OPTARG
+                #echo "-N used:$OPTARG"
+                ;;
+        b) #set flanking base pairs "b"
+                addbp=$OPTARG
+				#echo "-b used:$OPTARG"
+                ;;
+        h) #set hellp
+                HELP
+                ;;
+        \?) #unrecognized option - show help;
+                HELP
+                ;;
+        esac	
+done
+#echo $OPTIND
+shift $((OPTIND-1))
+
+#------
+#Test output fold exists or not
+#------
+if [[ -d $out_dir ]];then
+    echo -e "\033[31mWarning!!!!!   The output folder will be overwritten!.\033[0m"
+    rm -r $out_dir
+fi
+
+mkdir -p $out_dir
+mkdir ${out_dir}/guidance_structure
+mkdir ${out_dir}/candidate_ensemble
+mkdir ${out_dir}/penalty
+
+out_dir_full="`readlink -e $out_dir`"
+bin_dir_full="`readlink -e $0`"
+script_dir_full="${bin_dir_full/bin\/SHAPELoop/scripts}"
+
+#------
+#Test file exists or not
+#------
+if ! [[ -f $seq ]];then
+    echo -e "\033[31mError!!!!!   Sequence file not found!.\033[0m"
+    HELP
+fi
+if ! [[ -f $shape ]];then
+    echo -e "\033[31mError!!!!!   SHAPE reactivity file not found!.\033[0m"
+        HELP
+fi
+if ! [[ $ncand ]];then
+        ncand=1000
+fi
+
+if ! [[ $addbp ]];then
+        addbp=2;
+fi
+
+if ! [[ $all_sup ]];then
+        all_sup=0;
+fi
+
+if ! [[ $name ]];then
+        name="test";
+fi
+
+#------
+#Predict structures
+#------
+echo "--- SHAPELoop ---";
+echo "Parameters used:"
+echo ""
+printf "%-30s\t%-10s\n" "<name>"  $name
+printf "%-30s\t%-10s\n" "<sequence>"  $seq
+printf "%-30s\t%-10s\n" "<SHAPE>"  $shape
+printf "%-30s\t%-10s\n" "<candidate size>"  $ncand
+printf "%-30s\t%-10s\n" "<flanking base pairs>"  $addbp
+if [ $all_sup -eq 1 ];then
+    printf "%-30s\t%-10s\n" "<output suboptimal structures>"  "Yes"
+fi
+printf "%-30s\t%-10s\n" "<output directory>"  $out_dir
+echo ""
+echo "---------------"
+echo ""
+
+python $script_dir_full/shapel.py $name $seq $shape $ncand $addbp $out_dir $all_sup
+
+if  [[ -f ${out_dir}/${name}.SHAPELoop.dot ]];then
+    echo "--- Prediction done! ---"
+    echo "Please see the $out_dir_full folder for details"
+fi
