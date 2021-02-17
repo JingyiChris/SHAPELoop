@@ -162,4 +162,3 @@ test/
 | Column5 | Penalty       |
 
 > * The `test.SHAPELoop.dot` contains the predicted structures.
-

@@ -51,10 +51,10 @@ function HELP
     printf "\t%2s\t%-10s\t%-50s\n\n" "-c" "<filename>" "Dataset to be combined for SHAPE pattern identification"
     printf "\t%2s\t%-10s\t%-50s\n\n" "-m" "<filename>" "Candidate structures predicted by MC-Fold, dot file"
     printf "\t%2s\t%-10s\t%-50s\n\n" "-N" "<int>"  "Specify the size of Boltzmann-weighted candidate ensemble. Default is 1000 structures"
-    printf "\t%2s\t%-10s\t%-50s\n\n" "-b" "<int>"  "Specify the number of flanking base pairs of loops. Default is two base pairs" 
+    printf "\t%2s\t%-10s\t%-50s\n\n" "-b" "<int>"  "Specify the number of flanking base pairs of loops. Default is two base pairs"
     echo -e "${BOLD}Options Without Parameters:${NORM}";
-    printf "\t%2s\t%-10s\t%-50s\n\n" "-a" ""  "Provide all suboptimal structures" 
-    printf "\t%2s\t%-10s\t%-50s\n\n" "-h" "" "Help" 
+    printf "\t%2s\t%-10s\t%-50s\n\n" "-a" ""  "Provide all suboptimal structures"
+    printf "\t%2s\t%-10s\t%-50s\n\n" "-h" "" "Help"
     printf -v line '%*s' "100";echo ${line// /-}
     exit 0
 }
@@ -147,7 +147,7 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
         \?) #unrecognized option - show help;
                 HELP
                 ;;
-        esac	
+        esac
 done
 #echo $OPTIND
 shift $((OPTIND-1))
