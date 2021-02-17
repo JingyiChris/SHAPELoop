@@ -161,4 +161,4 @@ test/
 | Column4 | Loop position |
 | Column5 | Penalty       |
 
-> * The `test.SHAPELoop.dot` contains the predicted structures.
+> * The `test.SHAPELoop.dot` file contains the predicted structure.
