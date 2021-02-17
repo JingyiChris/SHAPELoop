@@ -1,95 +1,63 @@
-##################################################################################################
-#   Summarize conserved SHAPE patterns for loop motifs                                           #
-#                                                                                                #
-#   example:                                                                                     #
-#        hairpin|4|:  1>0 (SHAPE reactivity of residue 2 is higher than that of residue 1),      #
-#                     2>0 (SHAPE reactivity of residue 3 is higher than that of residue 1)       #
-#                                                                                                #
-#   Input: loop_dict, loop_type                                                                  #
-#                                                                                                #
-#   Parameters:                                                                                  #
-#       merge_internal: merge asymmetric internal loops, such as 5'-xxx|3'-xx and 5'-xx|3'-xxx   #
-#       pvalue: P-value cutoff for wilcoxon test (default is 0.05),                              #
-#       topN: keep SHAPE patterns with the lowest N p-value (default is 2)                       #
-#                                                                                                #
-#   Output: rule_dict, {loop_type|loop_length|: [(shape_rule, P-value), ...]...}                 #
-##################################################################################################
+#!/usr/bin/env python3
 
+'''
+Summarize conserved SHAPE patterns for loop motifs
+'''
 import pandas as pd
 import numpy as np
-from scipy.stats import wilcoxon 
+from scipy.stats import wilcoxon
 from collections import Counter
+import warnings
+warnings.filterwarnings('ignore')
+from loop_motifs import *
+from sys import argv
+import os
 
-#====================================================================================
-def merge_dicts(diclist):
-    result = {}
-    for dictionary in diclist:
-        result.update(dictionary)
-    return result
-#====================================================================================
-def mask_dic(dic):
-    for key in list(dic):
-        if not dic.get(key):
-            del dic[key]
-    return dic
-#====================================================================================
-def get_statistical_summary(loopdic,looptype,pvalue=0.05,topN=2,merge_internal=True):
-    f_dic = {}
-    f_dic_top2 = {}
-    pelist = list(set([x.split("|")[1] for x in loopdic.keys()]))
+#--------------------------- get input ----------------------------------
+input_data = open(argv[1]).readlines()
+mode_tmp = argv[2]
+out_dir = argv[3]
+tmp_path = os.path.split(os.path.realpath(__file__))[0]
+
+if mode_tmp == 'combined':
+    h_ori = pd.read_csv(tmp_path.replace("scripts","shape_pattern/") +\
+        "hairpins.txt",header=None,sep='\t')
+    it_ori = pd.read_csv(tmp_path.replace("scripts","shape_pattern/") + \
+        "internals.txt",header=None,sep='\t')
+    bu_ori = pd.read_csv(tmp_path.replace("scripts","shape_pattern/") + \
+        "bulges.txt",header=None,sep='\t')
+
+#--------------------------- get SHAPE patterns -------------------------
+h_loop = []
+it_loop = []
+bu_loop = []
+for tmp in range(int(len(input_data)/4)):
+    r_name = input_data[tmp*4].strip()
+    true_seq = input_data[tmp*4+1].strip()
+    true_dot = input_data[tmp*4+2].strip()
+    true_shape = [float(x) for x in input_data[tmp*4+3].strip().split(',')]
     
-    for pe_tmp in pelist:
-        pe = '|'+pe_tmp+'|'
-        f_dic[looptype+pe] = []
-        compare_list = []
-        se = [x  for x in loopdic.keys() if pe in x ]
-        
-        ##Get array for wilcoxon test
-        if looptype != 'internal' or merge_internal == False:
-            for x in range(len(loopdic[se[0]][1])):
-                compare_list.append([loopdic[p][1][x] for p in se])
-        
-        else:
-           
-            ##Merge asymmetric internal loops: such as 5'-GAA|3'-CG and 5'-GC|3'-AAG
-            tmp1 = pe_tmp.split("_")[0]
-            tmp2 = pe_tmp.split("_")[1]
-            update_dic = {}
-            for k,v in loopdic.items():
-                if pe_tmp in k:
-                    update_dic[k] = v 
-                if "|"+tmp2+"_"+tmp1+"|" in k and tmp1!=tmp2:
-                    update_dic[k] = (v[0],v[1][-int(tmp1):]+v[1][:int(tmp2)])
-            
-            for x in range(int(tmp1)+int(tmp2)):
-                compare_list.append([v[1][x] for k,v in update_dic.items()])
-            
-        
-        #Compare SHAPE reactivities between each two residue with wilcoxon test
-        compare_list = np.array(compare_list)
-        for n1,j in enumerate(compare_list):
-            for n2,k in enumerate(compare_list):
-                if n1<n2:
-                    test_2 = compare_list[[n1,n2]]
-                    test_2_tmp = np.delete(test_2,np.where(test_2 < -500)[1],axis=1)
-                    
-                    if (test_2_tmp[0]==test_2_tmp[1]).all() == False :
-                        p_value_g = wilcoxon(test_2_tmp[0],test_2_tmp[1],alternative='greater')[1]
-                        p_value_l = wilcoxon(test_2_tmp[0],test_2_tmp[1],alternative='less')[1]
-                        
-                        if p_value_g <pvalue:
-                            sym = str(n1)+"_"+str(n2)
-                            f_dic[looptype+pe].append((sym,p_value_g))
-                        if p_value_l <pvalue:
-                            sym = str(n2)+"_"+str(n1)
-                            f_dic[looptype+pe].append((sym,p_value_l))
-            
-        #filter SHAPE rules for each loop type: keep SHAPE rules with the two smallest P-value
-        if f_dic[looptype+pe]:
-            f_dic_top2[looptype+pe] = []
-            p_list = [xp[1] for xp in f_dic[looptype+pe]]
-            rank_tmp = sorted(Counter(p_list).keys())[:topN]
-            for n_p,xp in enumerate(p_list):
-                if xp in rank_tmp:
-                    f_dic_top2[looptype+pe].append((f_dic[looptype+pe][n_p][0],xp))
-    return(mask_dic(f_dic_top2))
+    h_loop.append(get_h(true_dot,true_seq,true_shape,r_name))
+    it_loop.append(get_it(true_dot,true_seq,true_shape,r_name))
+    bu_loop.append(get_bu(true_dot,true_seq,true_shape,r_name))
+    
+if mode_tmp == 'combined':
+    h_loop.append(dict(zip(h_ori.iloc[:,0],\
+        [(0,[float(x1) for x1 in x.split(",")]) for x in h_ori.iloc[:,1]])))
+    it_loop.append(dict(zip(it_ori.iloc[:,0],\
+        [(0,[float(x1) for x1 in x.split(",")]) for x in it_ori.iloc[:,1]])))
+    bu_loop.append(dict(zip(bu_ori.iloc[:,0],\
+        [(0,[float(x1) for x1 in x.split(",")]) for x in bu_ori.iloc[:,1]])))
+
+hairpin_sum = get_statistical_summary(merge_dicts(h_loop),'hairpin')
+internal_sum = get_statistical_summary(merge_dicts(it_loop),'internal')
+bulge_sum = get_statistical_summary(merge_dicts(bu_loop),'bulge')
+rule_dic = merge_dicts([hairpin_sum,internal_sum,bulge_sum])
+if rule_dic:
+    print('--- SHAPE pattern identification done! ---')
+    with open(out_dir+'/SHAPE_pattern.txt','w') as D:
+        for k,v in rule_dic.items():
+            for x in v:
+                D.write(k+'\t'+x[0]+'\t'+str(x[1])+'\n')
+else:
+    print('--- No SHAPE patterns identified! ---')
