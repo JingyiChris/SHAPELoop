@@ -1,10 +1,10 @@
 #!/bin/bash
 
-###############################################
-# Get MFE structure with shape constraints    #
-# Input: seqfile, shapefile                   #
-# Output: ctfile, dotfile                     #
-###############################################
+###################################################
+# Get the MFE structure with SHAPE constraints    #
+# Input: seqfile, shapefile                       #
+# Output: ctfile, dotfile                         #
+###################################################
 help()
 {
 cat << HELP

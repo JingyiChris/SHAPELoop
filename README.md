@@ -13,7 +13,7 @@ The SHAPELoop framework consists of:
 ## Prerequisites
 
 - Python (>=3.6.10)
-- [RNAstructure](https://rna.urmc.rochester.edu/RNAstructure.html) (default)
+- [RNAstructure](https://rna.urmc.rochester.edu/RNAstructure.html)
 - [MC-Fold](https://major.iric.ca/MajorLabEn/MC-Tools.html) (if non-canonical base pairs are considered)
 
 Please make sure that RNAstructure and its data tables are in your environment variable.
@@ -24,7 +24,7 @@ export DATAPATH=/path/to/RNAstructure/data_tables/
 
 ## Before running
 
-It is **recommended** to define the environment variables by adding the following to your bash profiles:
+It is **recommended** to define the environment variables by adding the following line to your bash profiles:
 ```
 export PATH=$PATH:/path/to/SHAPELoop/bin/
 ```
@@ -76,7 +76,7 @@ Options Without Parameters:
 ### Step 1: Prepare input files
 Required input files:
 - <RNA_sequence> : FASTA format sequence input.
-- <SHAPE_reactivities> : The file format comprises two columns. The first column is the nucleotide number (1-based), and the second is the reactivities. Nucleotides without SHAPE data can be set as less than -500. Columns are separated by a tab. It may look like this:
+- <SHAPE_reactivities> : It contains tab-delimited columns. The first column is the nucleotide number (1-based), and the second one is the SHAPE reactivity. The reactivities for nucleotides without SHAPE data can be set as less than -500. It may look like this:
 
  Nucleotide | Reactivity 
 :--:|:--:
@@ -87,7 +87,7 @@ Required input files:
  5 | 0.1520 
 
 Optional input files:
-- Additional_dataset_for_SHAPE_pattern (with "-d" or "-c" options). Its format is shown below:
+- Additional_dataset_for_SHAPE_pattern_identification (with "-d" or "-c" options). Its format is shown below:
 ```
 >novel1  ##name
 AGGGUGAGAGUCCCGAACUGUGAAGGCAGAAGUAACAGUUAGCCUAACGCAAGGGUGUCCGUGGCGACAUGGAAUCUGAAGGAAGCGGACGGCA  ##sequence
@@ -101,10 +101,10 @@ AACCUUCGGUCUGAGGAACACGAACUUCAUAUGAGGCUAGGUAUCAAUGGAUGAGUUUGCAUAACAAAACAAAGUCCUUU
 ```
 - MC-Fold_candidates (with the "-m" option). Its format is shown below:
 ```
->test2
-GCCGUGAUAGUUUAAUGGUCAGAAUGGGCGCUUGUCGCGUGCCAGAUCGGGGUUCAAUUCCCCGUCGCGGCGCCA
-((((((((................(((((((.....)))).)))....((((......)))).))))))))....
-((((((((........((((....(((((((.....)))).)))))))((((......)))).))))))))....
+>test2 ##name
+GCCGUGAUAGUUUAAUGGUCAGAAUGGGCGCUUGUCGCGUGCCAGAUCGGGGUUCAAUUCCCCGUCGCGGCGCCA  ##sequence
+((((((((................(((((((.....)))).)))....((((......)))).))))))))....  ##structure1
+((((((((........((((....(((((((.....)))).)))))))((((......)))).))))))))....  ##structure2
 ...
 ```
 ### Step 2: Predict RNA secondary structures
@@ -133,6 +133,8 @@ SHAPELoop -s /path/to/SHAPELoop/example/test.seq -r /path/to/SHAPELoop/example/t
 #### Output files:
 ```
 test/
+├── SHAPE_pattern.txt (optional)
+│
 ├── guidance_structure
 │   ├── test.guidance.ct
 │   └── test.guidance.dot
@@ -161,4 +163,4 @@ test/
 | Column4 | Loop position |
 | Column5 | Penalty       |
 
-> * The `test.SHAPELoop.dot` contains the predicted structures.
+> * The `test.SHAPELoop.dot` file contains the predicted structure.

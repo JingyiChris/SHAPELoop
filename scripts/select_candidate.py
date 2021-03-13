@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-##############################################################################################
-#   Select candidates according to their loop penalties and loop positions.                  #
-##############################################################################################
+##############################################################
+#    Select candidates according to their loop penalties     #
+##############################################################
 from evaluate_loops import *
 import numpy as np
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-
-'''
-Summarize conserved SHAPE patterns for loop motifs
-'''
+#################################################################
+#    Summarize characteristic SHAPE patterns for loop motifs    #
+#################################################################
 import pandas as pd
 import numpy as np
 from scipy.stats import wilcoxon

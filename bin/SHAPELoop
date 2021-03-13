@@ -1,15 +1,8 @@
 #!/bin/bash
 
 ##############################################################################
-#   This file is part of SHAPELoop.                                          #
-#   SHAPELoop is an RNA secondary structure prediction tool developed        #
-#   based on conserved SHAPE patterns of various loop motifs.                #
-#                                                                            #
-#   Shapepattern can be used for multiple purposes:                          #
-#           1. Predict RNA secondary structures                              #
-#           2. Evaluate manually inspected or software predicted structures  #
-#           3. Identify kissing loops in RNAs                                #
-#           4. Detect structure switches of RNAs                             #
+#   SHAPELoop is an RNA secondary structure prediction tool based on         #
+#       characteristic SHAPE patterns for various loop motifs.               #
 #                                                                            #
 #   Author: Jingyi Cao                                                       #
 #                                                                            #
@@ -58,7 +51,6 @@ function HELP
     printf -v line '%*s' "100";echo ${line// /-}
     exit 0
 }
-echo $#
 if [ $# == 0 ] ;then
         HELP;
         exit 1
@@ -75,7 +67,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -n!\033[0m"
                     exit 1
                 fi
-                echo "-n used:$OPTARG"
                 ;;
         s) #set RNA sequence "s"
                 seq=$OPTARG
@@ -83,7 +74,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -s!\033[0m"
                     exit 1
                 fi
-                echo "-s used:$OPTARG"
                 ;;
         r) #set SHAPE reactivities "r"
                 shape=$OPTARG
@@ -91,7 +81,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -r!\033[0m"
                     exit 1
                 fi
-                echo "-r used:$OPTARG"
                 ;;
         o) #set output directory "o"
                 out_dir=$OPTARG
@@ -99,7 +88,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -o!\033[0m"
                     exit 1
                 fi
-                echo "-o used:$OPTARG"
                 ;;
         d) #set novel dataset "d"
                 mode1=$OPTARG
@@ -107,7 +95,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -d!\033[0m"
                     exit 1
                 fi
-                echo "-d used:$OPTARG"
                 ;;
         c) #set additional dataset "c"
                 mode2=$OPTARG
@@ -115,7 +102,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -c!\033[0m"
                     exit 1
                 fi
-                echo "-c used:$OPTARG"
                 ;;
         N) #set candidate size "N"
                 ncand=$OPTARG
@@ -123,7 +109,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -N!\033[0m"
                     exit 1
                 fi
-                echo "-N used:$OPTARG"
                 ;;
         b) #set flanking base pairs "b"
                 addbp=$OPTARG
@@ -131,7 +116,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -b!\033[0m"
                     exit 1
                 fi
-                echo "-b used:$OPTARG"
                 ;;
         m) #set mcfold "m"
                 mcfold=$OPTARG
@@ -139,7 +123,6 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                     echo -e "\033[31mError!!!!!   no argument given for -m!\033[0m"
                     exit 1
                 fi
-                echo "-m used:$OPTARG"
                 ;;
         h) #set hellp
                 HELP
@@ -149,12 +132,11 @@ while getopts 'n:s:r:o:d:c:N:b:m:ah' FLAG; do
                 ;;
         esac
 done
-#echo $OPTIND
 shift $((OPTIND-1))
 
 
 #------
-#Test output fold exists or not
+#Test output folder exists or not
 #------
 if [[ -d $out_dir ]];then
     echo -e "\033[1;34mWarning!!!!!   The output folder will be overwritten!\033[0m"
@@ -171,7 +153,7 @@ bin_dir_full="`readlink -e $0`"
 script_dir_full="${bin_dir_full/bin\/SHAPELoop/scripts}"
 
 #------
-#Test file exists or not
+#Test input files exist or not
 #------
 if ! [[ -f $seq ]];then
     echo -e "\033[31mError!!!!!   Sequence file not found!\033[0m"

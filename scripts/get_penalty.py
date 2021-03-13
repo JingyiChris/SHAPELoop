@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-#####################################################################################
-#   Get loop penalties for candidates based on                                      #
-#####################################################################################
+###############################################
+#    Get penalties for loops in candidates    #
+###############################################
 from scipy import stats
 from loop_motifs import *
 
@@ -49,4 +49,5 @@ def get_score_for_loops(loop_pos):
             p = get_prob_for_dshape(x)
             if p >0.5:
                 loop_score[k] += np.log((1-p)/p)
+        loop_score[k] = 0 if loop_score[k] > -0.1 else loop_score[k]
     return(loop_score)

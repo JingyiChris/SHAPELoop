@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
+#########################################################################
+#    Extract hairpin, internal and bulge loops from given structures    #
+#    Input: sequence, dot_bracket structure, SHAPE reactivity           #
+#    Parameter: the number of flanking base pairs (addbp=2)             #
+#########################################################################
 
-#######################################################################
-#   Extract hairpin, internal and bulge loops from given structures   # 
-#                                                                     #
-#   Input: dot_bracket structure, sequence, shape reactivity          #
-#                                                                     #
-#   Parameters: number of flanking base pairs (addbp=2)               #
-#                                                                     #
-#######################################################################
 import pandas as pd
 import numpy as np
 from scipy.stats import wilcoxon

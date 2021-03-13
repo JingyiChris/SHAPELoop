@@ -1,26 +1,7 @@
 #!/usr/bin/env python
-
-#############################################################################
-#   This file is the main part of SHAPELoop.                                #
-#   SHAPELoop is an RNA secondary structure prediction tool developed       #
-#   based on conserved SHAPE patterns of various loop motifs.               #
-#                                                                           #
-#   Shapepattern can be used for multiple purposes:                         #
-#           1. Predict RNA secondary structures                             #
-#           2. Evaluate munally inspected or software predicted structures  #
-#           3. Identify kissing loops in RNA                                #
-#           4. Detect structure switches of RNA                             #
-#                                                                           #
-#   Author: Jingyi Cao                                                      #
-#                                                                           #
-#   Copyright (C) 2020  Jingyi Cao                                          #
-#                                                                           #
-#   SHAPELoop is distributed in the hope that it will be useful,            #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                    #
-#                                                                           #
-#   Contact: caojingyi1258@outlook.com                                      #
-#############################################################################
+#################################################
+#    This file is the main part of SHAPELoop    #
+#################################################
 
 import pandas as pd
 import numpy as np
@@ -71,7 +52,7 @@ os.system("sh " + tool_pfs + " " + ex_seq + " " + ex_shape + " " + ex_pfs + " " 
 os.system("rm " + ex_pfs)
 
 
-#------ load seq, structures, and conserved SHAPE patterns -----
+#------ load seq, structures, and characteristic SHAPE patterns -----
 e_dot = open(ex_dot).readlines()[2].strip()
 e_seq = open(ex_seq).readlines()[1].strip()
 e_shape = pd.read_csv(ex_shape,header=None,sep='\t').iloc[:,1].tolist()
@@ -82,7 +63,7 @@ if mcfold == 'false':
 else:
     pfs_dot = pd.read_csv(mcfold,header=None).iloc[2:,0].tolist()
 
-#------ conserved SHAPE patterns ------
+#------ get updated characteristic SHAPE patterns ------
 if mode == 'default':
     shpatterns = open(tmp_path.replace("scripts","shape_pattern/") + "SHAPE_pattern.txt").readlines()
 else:
@@ -121,11 +102,11 @@ with open(out_dir+'/penalty/'+ex_name+'.guidance.penalty','w') as D:
 print("Done.")
 
 
-#------ classify loops in guidance structure ------
+#------ classify loops in the guidance structure ------
 print("-----------------------------------------------------------")
 print(" Evaluate loops in guidance structure...")
 print("-----------------------------------------------------------")
-poor_loop,good_loop = get_good_poor_loops(score)
+poor_loop,good_loop,middle_loop = get_good_poor_middle_loops(score)
 print("Done.")
 print("#poor loop:")
 for pl in poor_loop:
@@ -133,6 +114,9 @@ for pl in poor_loop:
 print("\n#good loop:")
 for gl in good_loop:
     print (gl)
+print("\n#middle loop:")
+for ml in middle_loop:
+    print (ml)
 
 
 #------ get penalties for candidate structures ------
@@ -162,9 +146,9 @@ print("-----------------------------------------------------------")
 print(" Select candidate...")
 print("-----------------------------------------------------------")
 if len(poor_loop)>0:
-    score_for_can = second_socre_for_candidates(can_score_tmp,poor_loop,good_loop)
+    score_for_can = second_socre_for_candidates(can_score_tmp,poor_loop,good_loop,middle_loop)
 else:
-    score_for_can = poor_loop_0(can_score_tmp,good_loop)
+    score_for_can = poor_loop_0(can_score_tmp,good_loop,middle_loop)
 ctrl_score = np.sum(score.values())
 selected_id = select_can(score_for_can,can_score_tmp,e_dot,ctrl_score)
 

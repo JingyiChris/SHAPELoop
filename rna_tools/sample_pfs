@@ -2,7 +2,7 @@
 
 ######################################################################
 # Get sampled structures with Boltzmann conditional probabilities    #
-# and SHAPE constraints                                              #
+#     and SHAPE constraints                                          #
 #                                                                    #
 # Input: seqfile, shapefile                                          #
 # Output: pfsfile, ctfile, dotfile                                   #
