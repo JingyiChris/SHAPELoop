@@ -70,7 +70,7 @@ else:
     try:
         shpatterns = open(out_dir + "/SHAPE_pattern.txt").readlines()
     except IOError:
-        print '\x1B[31mError!: No characteristic SHAPE patterns are identified\x1B[0m'
+        print ('\x1B[31mError!: No characteristic SHAPE patterns are identified\x1B[0m')
         raise SystemExit(1)
 rule_dict = {}
 for each_rule in shpatterns:
@@ -149,7 +149,7 @@ if len(poor_loop)>0:
     score_for_can = second_socre_for_candidates(can_score_tmp,poor_loop,good_loop,middle_loop)
 else:
     score_for_can = poor_loop_0(can_score_tmp,good_loop,middle_loop)
-ctrl_score = np.sum(score.values())
+ctrl_score = np.sum(list(score.values()))
 selected_id = select_can(score_for_can,can_score_tmp,e_dot,ctrl_score)
 
 if -1 in selected_id:
