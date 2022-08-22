@@ -222,9 +222,9 @@ echo ""
 echo "---------------"
 echo ""
 if [ "$mode" == "novel" ];then
-    /home/jingyi/miniconda2/envs/python36/bin/python -W ignore $script_dir_full/shape_rule_summary.py $mode1 $mode $out_dir
+    python -W ignore $script_dir_full/shape_rule_summary.py $mode1 $mode $out_dir
 elif [ "$mode" == "combined" ];then
-    /home/jingyi/miniconda2/envs/python36/bin/python -W ignore $script_dir_full/shape_rule_summary.py $mode2 $mode $out_dir
+    python -W ignore $script_dir_full/shape_rule_summary.py $mode2 $mode $out_dir
 else
     echo "--- Use SHAPELoop provided SHAPE patterns ---"
 fi
